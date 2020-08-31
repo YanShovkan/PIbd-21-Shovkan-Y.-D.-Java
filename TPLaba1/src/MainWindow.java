@@ -1,9 +1,9 @@
 import java.awt.EventQueue;
-
+import javax.swing.JButton;
 import javax.swing.JFrame;
 
 public class MainWindow {
-
+	private JButton button;
 	private JFrame frame;
 
 	/**
@@ -36,6 +36,7 @@ public class MainWindow {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
 	}
 
 }
