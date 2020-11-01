@@ -3,14 +3,20 @@ import java.awt.*;
 
 public class FrameSeaPlane {
     private final JFrame frame;
-    private MyPanel myPanel;
+    private GamePanel gamePanel;
     private JComboBox floats;
     private JComboBox floatForm;
+
+    public void setPlane(IAirTransport plane) {
+        plane.SetPosition((int) (10 + Math.random() * 90), (int) (100 + Math.random() * 100), frame.getWidth(), frame.getHeight());
+        gamePanel.setPlane(plane);
+        frame.repaint();
+    }
 
     public FrameSeaPlane() {
         frame = new JFrame("Гидролет");
         frame.setSize(900, 500);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
 
@@ -37,6 +43,7 @@ public class FrameSeaPlane {
         frame.getContentPane().add(btnDown);
         frame.getContentPane().add(btnLeft);
         frame.getContentPane().add(btnRight);
+
         btnCreateSeaPlane.setBounds(200, 10, 180, 30);
         btnCreatePlane.setBounds(10, 10, 180, 30);
         btnUp.setBounds(805, 375, 30, 30);
@@ -59,12 +66,9 @@ public class FrameSeaPlane {
         frame.getContentPane().add(floats);
         floats.setBounds(10, 45, 180, 30);
 
-    }
-
-    public void addMyPanel(MyPanel panel) {
-        myPanel = panel;
-        frame.getContentPane().add(myPanel);
-        myPanel.setBounds(0, 0, 900, 500);
+        gamePanel = new GamePanel();
+        frame.getContentPane().add(gamePanel);
+        gamePanel.setBounds(0, 0, 900, 500);
         frame.repaint();
     }
 
@@ -72,30 +76,30 @@ public class FrameSeaPlane {
         String name = button.getName();
         switch (name) {
             case "up":
-                myPanel.getPlane().MovePlane(Direction.Up);
+                gamePanel.getPlane().MovePlane(Direction.Up);
                 break;
             case "down":
-                myPanel.getPlane().MovePlane(Direction.Down);
+                gamePanel.getPlane().MovePlane(Direction.Down);
                 break;
             case "left":
-                myPanel.getPlane().MovePlane(Direction.Left);
+                gamePanel.getPlane().MovePlane(Direction.Left);
                 break;
             case "right":
-                myPanel.getPlane().MovePlane(Direction.Right);
+                gamePanel.getPlane().MovePlane(Direction.Right);
                 break;
         }
         frame.repaint();
     }
 
     private void setSeaPlane() {
-        myPanel.setPlane(new SeaPlane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 500), Color.RED, Color.GREEN, true, true, floats.getSelectedIndex(), floatForm.getSelectedItem().toString()));
-        myPanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
+        gamePanel.setPlane(new SeaPlane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 1500), Color.RED, Color.GREEN, true, true, floats.getSelectedIndex(), floatForm.getSelectedItem().toString()));
+        gamePanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
         frame.repaint();
     }
 
     private void setPlane() {
-        myPanel.setPlane(new Plane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 500), Color.RED));
-        myPanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
+        gamePanel.setPlane(new Plane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 1500), Color.RED));
+        gamePanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
         frame.repaint();
     }
 }

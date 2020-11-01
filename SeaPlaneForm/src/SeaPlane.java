@@ -9,7 +9,7 @@ public class SeaPlane extends Plane {
 
     public SeaPlane(int maxSpeed, float weight, Color mainColor, Color dopColor, boolean planeFloat,
                     boolean lowerWing, int floats, String floatForm) {
-        super(maxSpeed, weight, mainColor, 100, 60);
+        super(maxSpeed, weight, mainColor, 100, 70);
         DopColor = dopColor;
         PlaneFloat = planeFloat;
         LowerWing = lowerWing;
