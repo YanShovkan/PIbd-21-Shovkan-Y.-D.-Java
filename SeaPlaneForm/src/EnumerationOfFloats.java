@@ -2,6 +2,7 @@ public enum EnumerationOfFloats {
     Two,
     Four,
     Six;
+
     public static EnumerationOfFloats getChosenNumber(int number) {
         switch (number) {
             case 0:

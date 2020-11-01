@@ -3,19 +3,19 @@ import java.awt.*;
 
 public class MyPanel extends JPanel {
 
-    private SeaPlane seaPlane;
+    private IAirTransport plane;
 
-    public void paintComponent(Graphics g) {
-        if (seaPlane != null){
-            seaPlane.draw(g);
+    public void paint(Graphics g) {
+        if (plane != null) {
+            plane.DrawPlane(g);
         }
     }
 
-    public SeaPlane getSeaPlane() {
-        return seaPlane;
+    public IAirTransport getPlane() {
+        return plane;
     }
 
-    public void setSeaPlane(SeaPlane seaPlane) {
-        this.seaPlane = seaPlane;
+    public void setPlane(IAirTransport plane) {
+        this.plane = plane;
     }
 }
