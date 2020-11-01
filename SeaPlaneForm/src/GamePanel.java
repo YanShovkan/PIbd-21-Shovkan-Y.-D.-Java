@@ -1,11 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class MyPanel extends JPanel {
+public class GamePanel extends JPanel {
 
     private IAirTransport plane;
 
     public void paint(Graphics g) {
+        super.paint(g);
         if (plane != null) {
             plane.DrawPlane(g);
         }
