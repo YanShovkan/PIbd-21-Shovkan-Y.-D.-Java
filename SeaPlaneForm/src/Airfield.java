@@ -1,7 +1,11 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Airfield<T extends IAirTransport, K extends IFloatForm> {
-    private final Object[] _places;
+    private final List<T> _places;
+
+    private final int _maxCount;
 
     private final int pictureWidth;
 
@@ -15,51 +19,51 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
     public Airfield(int picWidth, int picHeight) {
         int width = picWidth / _placeSizeWidth;
         int height = picHeight / _placeSizeHeight;
-        _places = new Object[width * height];
+        _maxCount = width * height;
+        _places = new ArrayList<>();
         pictureWidth = picWidth;
         pictureHeight = picHeight;
     }
 
     public boolean plus(T plane) {
-        for (int i = 0; i < _places.length; i++) {
-            if (_places[i] == null) {
-                plane.SetPosition(5 + i / 5 * _placeSizeWidth, i % 5 * _placeSizeHeight + 5, pictureWidth, pictureHeight);
-                _places[i] = plane;
-                return true;
-            }
+        if (_places.size() < _maxCount)
+        {
+            _places.add(plane);
+            return true;
         }
         return false;
     }
 
+    public T minus(int index) {
+        if (index >= 0 && index < _maxCount && _places.get(index) != null)
+        {
+            T truck = _places.get(index);
+            _places.remove(index);
+            return truck;
+        }
+        return null;
+    }
+
     public boolean bolsheRavno(Plane plane1, Plane plane2) {
         return (plane1.getWeight() >= plane2.getWeight());
-
     }
 
     public boolean mensheRavno(Plane plane1, Plane plane2) {
         return (plane1.getWeight() <= plane2.getWeight());
     }
 
-    public T minus(int index) {
-        if (_places[index] != null && index >= 0 && index < _places.length) {
-            Object temp = _places[index];
-            _places[index] = null;
-            return (T) (temp);
-        } else {
-            return null;
+    public T getAirPlane(int index) {
+        if (index >= 0 && index < _places.size()) {
+            return _places.get(index);
         }
+        return null;
     }
 
     public void Draw(Graphics g) {
         DrawMarking(g);
-        for (int i = 0; i < _places.length; i++) {
-            while (_places[i] == null) {
-                i++;
-                if (i == _places.length) {
-                    return;
-                }
-            }
-            ((T) _places[i]).DrawPlane(g);
+        for (int i = 0; i < _places.size(); i++) {
+            _places.get(i).SetPosition(10 + _placeSizeWidth * (i / 5), 10 + _placeSizeHeight * (i % 5), pictureWidth, pictureHeight);
+            _places.get(i).DrawPlane(g);
         }
     }
 
