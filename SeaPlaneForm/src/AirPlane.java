@@ -51,4 +51,6 @@ public abstract class AirPlane implements IAirTransport {
 
     public abstract void MovePlane(Direction direction);
 
+    public abstract void setNewMainColor(Color MainColor);
+
 }

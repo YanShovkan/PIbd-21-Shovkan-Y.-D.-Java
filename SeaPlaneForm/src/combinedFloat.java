@@ -3,18 +3,16 @@ import java.awt.*;
 public class combinedFloat implements IFloatForm {
 
     private EnumerationOfFloats floats;
-    private Color dopColor;
 
-    public combinedFloat(int number, Color dopColor) {
+    public combinedFloat(int number) {
         setDigit(number);
-        this.dopColor = dopColor;
     }
 
     public void setDigit(int number) {
         this.floats = EnumerationOfFloats.getChosenNumber(number);
     }
 
-    public void draw(Graphics g, int _startPosX, int _startPosY) {
+    public void draw(Graphics g, int _startPosX, int _startPosY,Color dopColor) {
         g.setColor(Color.BLACK);
 
         if (floats == EnumerationOfFloats.Two) {

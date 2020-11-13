@@ -65,4 +65,9 @@ public class Plane extends AirPlane {
         //wing part 2
         g.drawLine(_startPosX + 50, _startPosY + 25, _startPosX + 50, _startPosY + 10);
     }
+
+    @Override
+    public void setNewMainColor(Color MainColor){
+        this.MainColor = MainColor;
+    }
 }

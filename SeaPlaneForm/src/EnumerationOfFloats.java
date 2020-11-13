@@ -5,11 +5,11 @@ public enum EnumerationOfFloats {
 
     public static EnumerationOfFloats getChosenNumber(int number) {
         switch (number) {
-            case 0:
-                return EnumerationOfFloats.Two;
-            case 1:
-                return EnumerationOfFloats.Four;
             case 2:
+                return EnumerationOfFloats.Two;
+            case 4:
+                return EnumerationOfFloats.Four;
+            case 6:
                 return EnumerationOfFloats.Six;
         }
         return null;

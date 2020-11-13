@@ -15,13 +15,13 @@ public class SeaPlane extends Plane {
         LowerWing = lowerWing;
         switch (floatForm) {
             case "Прямоугольный":
-                this.floatForm = new squareFloat(floats, dopColor);
+                this.floatForm = new squareFloat(floats);
                 break;
             case "Овальный":
-                this.floatForm = new ovalFloat(floats, dopColor);
+                this.floatForm = new ovalFloat(floats);
                 break;
             case "Комбинированый":
-                this.floatForm = new combinedFloat(floats, dopColor);
+                this.floatForm = new combinedFloat(floats);
                 break;
         }
     }
@@ -60,7 +60,15 @@ public class SeaPlane extends Plane {
             g.fillOval(_startPosX + 30, _startPosY + 30, 40, 5);
         }
         if (PlaneFloat) {
-            floatForm.draw(g, _startPosX, _startPosY);
+            floatForm.draw(g, _startPosX, _startPosY, DopColor);
         }
+    }
+
+    public void setNewDopColor(Color DopColor) {
+        this.DopColor = DopColor;
+    }
+
+    public void setFloatForm(IFloatForm floatForm){
+        this.floatForm = floatForm;
     }
 }
