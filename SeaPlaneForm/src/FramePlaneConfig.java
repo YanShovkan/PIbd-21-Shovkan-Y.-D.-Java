@@ -25,7 +25,6 @@ public class FramePlaneConfig {
 
         frame = new JFrame("Конфигурация самолета");
         frame.setSize(690, 470);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLayout(null);
 
@@ -293,14 +292,14 @@ public class FramePlaneConfig {
     private void setSeaPlane() {
         plane = new SeaPlane((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.RED, Color.GREEN, checkBoxFloats.isSelected(), checkBoxLowerWing.isSelected(), (int) spinnerFloatCount.getValue(), "Комбинированый");
         paneConfigPanel.setPlane(plane);
-        paneConfigPanel.getPlane().SetPosition(40, 70, 200, 200);
+        paneConfigPanel.getPlane().setPosition(40, 70, 200, 200);
         frame.repaint();
     }
 
     private void setPlane() {
         plane = new Plane((int) spinnerMaxSpeed.getValue(), (int) spinnerWeight.getValue(), Color.RED);
         paneConfigPanel.setPlane(plane);
-        paneConfigPanel.getPlane().SetPosition(40, 70, 200, 200);
+        paneConfigPanel.getPlane().setPosition(40, 70, 200, 200);
         frame.repaint();
     }
 

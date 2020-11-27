@@ -7,7 +7,7 @@ public class PlaneConfigPanel extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         if (plane != null) {
-            plane.DrawPlane(g);
+            plane.drawPlane(g);
         }
     }
 
