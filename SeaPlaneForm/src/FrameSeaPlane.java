@@ -8,7 +8,7 @@ public class FrameSeaPlane {
     private JComboBox floatForm;
 
     public void setPlane(IAirTransport plane) {
-        plane.SetPosition((int) (10 + Math.random() * 90), (int) (100 + Math.random() * 100), frame.getWidth(), frame.getHeight());
+        plane.setPosition((int) (10 + Math.random() * 90), (int) (100 + Math.random() * 100), frame.getWidth(), frame.getHeight());
         gamePanel.setPlane(plane);
         frame.repaint();
     }
@@ -76,16 +76,16 @@ public class FrameSeaPlane {
         String name = button.getName();
         switch (name) {
             case "up":
-                gamePanel.getPlane().MovePlane(Direction.Up);
+                gamePanel.getPlane().movePlane(Direction.Up);
                 break;
             case "down":
-                gamePanel.getPlane().MovePlane(Direction.Down);
+                gamePanel.getPlane().movePlane(Direction.Down);
                 break;
             case "left":
-                gamePanel.getPlane().MovePlane(Direction.Left);
+                gamePanel.getPlane().movePlane(Direction.Left);
                 break;
             case "right":
-                gamePanel.getPlane().MovePlane(Direction.Right);
+                gamePanel.getPlane().movePlane(Direction.Right);
                 break;
         }
         frame.repaint();
@@ -93,13 +93,13 @@ public class FrameSeaPlane {
 
     private void setSeaPlane() {
         gamePanel.setPlane(new SeaPlane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 1500), Color.RED, Color.GREEN, true, true, floats.getSelectedIndex(), floatForm.getSelectedItem().toString()));
-        gamePanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
+        gamePanel.getPlane().setPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
         frame.repaint();
     }
 
     private void setPlane() {
         gamePanel.setPlane(new Plane((int) (Math.random() * 100 + 50), (int) (Math.random() * 1000 + 1500), Color.RED));
-        gamePanel.getPlane().SetPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
+        gamePanel.getPlane().setPosition((int) (Math.random() * 100 + 10), (int) (Math.random() * 100 + 10), 850, 450);
         frame.repaint();
     }
 }

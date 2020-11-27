@@ -5,24 +5,38 @@ public class Plane extends AirPlane {
 
     protected int planeHeight = 70;
 
-    public Plane(int maxSpeed, float weight, Color mainColor) {
-        MaxSpeed = maxSpeed;
-        Weight = weight;
-        MainColor = mainColor;
+    protected final String separator = ";";
+
+    protected final String separatorForColor = "-";
+
+    public Plane(int maxSpeed, int weight, Color mainColor) {
+        this.maxSpeed = maxSpeed;
+        this.weight = weight;
+        this.mainColor = mainColor;
     }
 
-    protected Plane(int maxSpeed, float weight, Color mainColor, int planeWidth, int planeHeight) {
-        MaxSpeed = maxSpeed;
-        Weight = weight;
-        MainColor = mainColor;
+    public Plane(String info) {
+        String[] infoStrs = info.split(separator);
+        if (infoStrs.length == 3) {
+            maxSpeed = Integer.parseInt(infoStrs[0]);
+            weight = Integer.parseInt(infoStrs[1]);
+            String[] colorStrs = infoStrs[2].split(separatorForColor);
+            mainColor = new Color(Integer.parseInt(colorStrs[0]), Integer.parseInt(colorStrs[1]), Integer.parseInt(colorStrs[2]));
+        }
+    }
+
+    protected Plane(int maxSpeed, int weight, Color mainColor, int planeWidth, int planeHeight) {
+        this.maxSpeed = maxSpeed;
+        this.weight = weight;
+        this.mainColor = mainColor;
         this.planeWidth = planeWidth;
         this.planeHeight = planeHeight;
     }
 
     @Override
-    public void MovePlane(Direction direction) {
+    public void movePlane(Direction direction) {
         int boarderNumber = 10;
-        int step = (int) (MaxSpeed * 1000 / Weight);
+        int step = (int) (maxSpeed * 1000 / weight);
         switch (direction) {
             case Up:
                 if (_startPosY - step > boarderNumber) {
@@ -48,9 +62,9 @@ public class Plane extends AirPlane {
     }
 
     @Override
-    public void DrawPlane(Graphics g) {
+    public void drawPlane(Graphics g) {
 
-        g.setColor(MainColor);
+        g.setColor(mainColor);
         //body
         g.fillOval(_startPosX + 80, _startPosY + 10, 20, 35);
         g.fillRect(_startPosX + 10, _startPosY + 25, 90, 20);
@@ -67,7 +81,13 @@ public class Plane extends AirPlane {
     }
 
     @Override
-    public void setNewMainColor(Color MainColor){
-        this.MainColor = MainColor;
+    public void setNewMainColor(Color MainColor) {
+        this.mainColor = MainColor;
     }
+
+    @Override
+    public String toString() {
+        return maxSpeed + separator + weight + separator + mainColor.getRed() + separatorForColor + mainColor.getGreen() + separatorForColor + mainColor.getBlue();
+    }
+
 }

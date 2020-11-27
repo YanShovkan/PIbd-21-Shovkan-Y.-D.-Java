@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
@@ -18,20 +21,45 @@ public class FrameAirfield {
         planeQueue = new LinkedList<>();
 
         frame = new JFrame("Аэродром");
-        frame.setSize(900, 500);
+        frame.setSize(900, 530);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setLayout(null);
 
-        airfieldCollection = new AirfieldCollection(700, 450);
+        JMenuBar menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
+
+        JMenu fileMenu = new JMenu("Файл");
+        menuBar.add(fileMenu);
+
+        JMenu saveMenu = new JMenu("Сохранить");
+        fileMenu.add(saveMenu);
+
+        JMenu loadMenu = new JMenu("Загрузить");
+        fileMenu.add(loadMenu);
+
+        JMenuItem saveAllDataItem = new JMenuItem("Сохранить целиком");
+        saveMenu.add(saveAllDataItem);
+
+        JMenuItem loadAllDataItem = new JMenuItem("Загрузить целиком");
+        loadMenu.add(loadAllDataItem);
+
+        JMenuItem saveChosenAirfieldItem = new JMenuItem("Сохранить один аэродром");
+        saveMenu.add(saveChosenAirfieldItem);
+
+        JMenuItem loadChosenAirfieldItem = new JMenuItem("Загрузить один аэродром");
+        loadMenu.add(loadChosenAirfieldItem);
+
+        airfieldCollection = new AirfieldCollection(600, 450);
         airfieldPanel = new AirfieldPanel(airfieldCollection);
+        airfieldPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 
         JButton buttonCreatePlane = new JButton("Создать самолет");
         JLabel labelPlace = new JLabel("Место:");
         JLabel labelTakePlane = new JLabel("Забрать самолет:");
         textFieldTakePalne = new JTextField();
-        JButton buttonMoveToQueue = new JButton("Поместить");
+        JButton buttonMoveToQueue = new JButton("Поместить ");
         JButton buttonGetFromQueue = new JButton("Получить");
 
         JLabel labelAirdieldName = new JLabel("Имя аэродрома");
@@ -55,22 +83,48 @@ public class FrameAirfield {
         frame.getContentPane().add(buttonDelAirfield);
         frame.getContentPane().add(listBoxAirfields);
 
-        labelAirdieldName.setBounds(710, 10, 170, 30);
-        fieldAirfieldName.setBounds(710, 50, 170, 30);
-        buttonAddAirfield.setBounds(710, 90, 170, 30);
-        listBoxAirfields.setBounds(710, 130, 170, 60);
-        buttonDelAirfield.setBounds(710, 200, 170, 30);
-
         airfieldPanel.setBounds(0, 0, 650, 450);
-        buttonCreatePlane.setBounds(710, 240, 170, 70);
-        labelPlace.setBounds(710, 330, 170, 20);
-        labelTakePlane.setBounds(710, 360, 170, 20);
-        textFieldTakePalne.setBounds(710, 390, 170, 20);
-        buttonGetFromQueue.setBounds(710, 420, 80, 30);
-        buttonMoveToQueue.setBounds(800, 420, 80, 30);
+        labelAirdieldName.setBounds(610, 10, 270, 30);
+        fieldAirfieldName.setBounds(610, 50, 270, 30);
+        buttonAddAirfield.setBounds(610, 90, 270, 30);
+        listBoxAirfields.setBounds(610, 130, 270, 60);
+        buttonDelAirfield.setBounds(610, 200, 270, 30);
+        buttonCreatePlane.setBounds(610, 240, 270, 70);
+        labelPlace.setBounds(610, 330, 270, 20);
+        labelTakePlane.setBounds(610, 360, 270, 20);
+        textFieldTakePalne.setBounds(610, 390, 270, 20);
+        buttonGetFromQueue.setBounds(610, 420, 130, 30);
+        buttonMoveToQueue.setBounds(750, 420, 130, 30);
 
+        saveChosenAirfieldItem.addActionListener(e -> {
+            try {
+                saveChosenAirfield();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        loadChosenAirfieldItem.addActionListener(e -> {
+            try {
+                loadChosenAirfield();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        saveAllDataItem.addActionListener(e -> {
+            try {
+                saveAll();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+        loadAllDataItem.addActionListener(e -> {
+            try {
+                loadAll();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        });
         buttonCreatePlane.addActionListener(e -> createPlane());
-
         buttonMoveToQueue.addActionListener(e -> takePlane());
         buttonGetFromQueue.addActionListener(e -> moveToFrame());
         buttonAddAirfield.addActionListener(e -> addAirfield());
@@ -83,7 +137,6 @@ public class FrameAirfield {
     private void createPlane() {
         FramePlaneConfig framePlaneConfig = new FramePlaneConfig(this);
     }
-
 
     public void addPlane(Plane plane) {
         if (plane != null && listBoxAirfields.getSelectedIndex() >= 0) {
@@ -125,7 +178,7 @@ public class FrameAirfield {
 
     private void addAirfield() {
         if (!fieldAirfieldName.getText().equals("")) {
-            airfieldCollection.AddAirfield(fieldAirfieldName.getText());
+            airfieldCollection.addAirfield(fieldAirfieldName.getText());
             reloadLevels();
             frame.repaint();
         } else {
@@ -137,12 +190,78 @@ public class FrameAirfield {
         if (listBoxAirfields.getSelectedIndex() >= 0) {
             int result = JOptionPane.showConfirmDialog(frame, "Удалить аэродром " + listBoxAirfields.getSelectedValue() + "?");
             if (result == JOptionPane.YES_OPTION) {
-                airfieldCollection.DelAirfield(listBoxAirfields.getSelectedValue());
+                airfieldCollection.delAirfield(listBoxAirfields.getSelectedValue());
                 reloadLevels();
                 frame.repaint();
             }
         } else {
             JOptionPane.showMessageDialog(frame, "Аэродрома не выбран");
+        }
+    }
+
+    private void saveAll() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showDialog(frame, "Save Airfield");
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().toString();
+            if (filename.contains(".txt")) {
+                airfieldCollection.saveAllData(filename);
+            } else {
+                airfieldCollection.saveAllData(filename + ".txt");
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Не удалось сохранить файл");
+        }
+    }
+
+    private void saveChosenAirfield() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
+        fileChooser.setFileFilter(filter);
+
+        int result = fileChooser.showDialog(frame, "Save Airfield");
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().toString();
+            if (filename.contains(".txt")) {
+                airfieldCollection.saveChosenAirfieldData(filename, listBoxAirfields.getSelectedValue());
+            } else {
+                airfieldCollection.saveChosenAirfieldData(filename + ".txt", listBoxAirfields.getSelectedValue());
+            }
+        } else {
+            JOptionPane.showMessageDialog(frame, "Не удалось сохранить файл");
+        }
+    }
+
+    private void loadAll() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
+        fileChooser.setFileFilter(filter);
+        int result = fileChooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().toString();
+            airfieldCollection.loadAllData(filename);
+            reloadLevels();
+            frame.repaint();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Не удалось загрузить файл");
+        }
+    }
+
+    private void loadChosenAirfield() throws IOException {
+        JFileChooser fileChooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
+        fileChooser.setFileFilter(filter);
+        int result = fileChooser.showOpenDialog(frame);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String filename = fileChooser.getSelectedFile().toString();
+            airfieldCollection.loadChosenAirfieldData(filename);
+            reloadLevels();
+            frame.repaint();
+        } else {
+            JOptionPane.showMessageDialog(frame, "Не удалось загрузить файл");
         }
     }
 

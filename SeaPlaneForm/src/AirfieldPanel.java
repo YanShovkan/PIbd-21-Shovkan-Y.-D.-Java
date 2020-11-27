@@ -9,7 +9,7 @@ public class AirfieldPanel extends JPanel {
     public void paint(Graphics g) {
         if (selectedItem != null) {
             if (airfieldCollection != null) {
-                airfieldCollection.get(selectedItem).Draw(g);
+                airfieldCollection.get(selectedItem).draw(g);
             }
         }
     }
