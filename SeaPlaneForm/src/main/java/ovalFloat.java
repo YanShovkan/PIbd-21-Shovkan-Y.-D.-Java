@@ -42,4 +42,5 @@ public class ovalFloat implements IFloatForm {
             g.fillOval(_startPosX + 75, _startPosY + 55, 25, 5);
         }
     }
+
 }
