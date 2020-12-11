@@ -1,12 +1,15 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Queue;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
+
 public class FrameAirfield {
+    private static Logger logger;
     private final JFrame frame;
     private final AirfieldPanel airfieldPanel;
     private final Queue<Plane> planeQueue;
@@ -17,7 +20,8 @@ public class FrameAirfield {
     private final JTextField textFieldTakePalne;
 
     public FrameAirfield() {
-
+        BasicConfigurator.configure();
+        logger = Logger.getLogger("Default");
         planeQueue = new LinkedList<>();
 
         frame = new JFrame("Аэродром");
@@ -96,34 +100,10 @@ public class FrameAirfield {
         buttonGetFromQueue.setBounds(610, 420, 130, 30);
         buttonMoveToQueue.setBounds(750, 420, 130, 30);
 
-        saveChosenAirfieldItem.addActionListener(e -> {
-            try {
-                saveChosenAirfield();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        loadChosenAirfieldItem.addActionListener(e -> {
-            try {
-                loadChosenAirfield();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        saveAllDataItem.addActionListener(e -> {
-            try {
-                saveAll();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
-        loadAllDataItem.addActionListener(e -> {
-            try {
-                loadAll();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        });
+        saveChosenAirfieldItem.addActionListener(e -> saveChosenAirfield());
+        loadChosenAirfieldItem.addActionListener(e -> loadChosenAirfield());
+        saveAllDataItem.addActionListener(e -> saveAll());
+        loadAllDataItem.addActionListener(e -> loadAll());
         buttonCreatePlane.addActionListener(e -> createPlane());
         buttonMoveToQueue.addActionListener(e -> takePlane());
         buttonGetFromQueue.addActionListener(e -> moveToFrame());
@@ -135,15 +115,28 @@ public class FrameAirfield {
     }
 
     private void createPlane() {
-        FramePlaneConfig framePlaneConfig = new FramePlaneConfig(this);
+        new FramePlaneConfig(this);
     }
 
     public void addPlane(Plane plane) {
-        if (plane != null && listBoxAirfields.getSelectedIndex() >= 0) {
-            if (((airfieldCollection.get(listBoxAirfields.getSelectedValue()).plus(plane)))) {
-                frame.repaint();
-            } else {
-                JOptionPane.showMessageDialog(frame, "Самолет не удалось поставить");
+        if (plane == null || listBoxAirfields.getSelectedIndex() < 0) {
+            logger.warn("Самолета нет или его некуда поставить");
+            JOptionPane.showMessageDialog(frame, "Самолета нет или его некуда поставить");
+        } else {
+            try {
+                if (airfieldCollection.get(listBoxAirfields.getSelectedValue()).plus(plane)) {
+                    logger.info("Добавлен самолет " + plane.toString());
+                    frame.repaint();
+                } else {
+                    logger.info("Самолет не удалось поставить");
+                    JOptionPane.showMessageDialog(frame, "Самолет не удалось поставить");
+                }
+            } catch (AirfieldOverflowException ex) {
+                logger.error("Переполнение");
+                JOptionPane.showMessageDialog(frame, "Переполнение");
+            } catch (Exception ex) {
+                logger.fatal("Неизвестная ошибка");
+                JOptionPane.showMessageDialog(frame, "Неизвестная ошибка");
             }
         }
     }
@@ -153,35 +146,46 @@ public class FrameAirfield {
             if (!textFieldTakePalne.getText().equals("")) {
                 try {
                     Plane plane = airfieldCollection.get(listBoxAirfields.getSelectedValue()).minus(Integer.parseInt(textFieldTakePalne.getText()));
-                    if (plane != null) {
-                        planeQueue.add(plane);
-                        frame.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(frame, "Самолёта с таким индексом нет!");
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(frame, "Самолёта с таким индексом нет!");
+                    logger.info("Добавлен самолет " + plane.toString());
+                    planeQueue.add(plane);
+                    frame.repaint();
+                } catch (PlaneNotFoundException ex) {
+                    logger.error("Самолёт не найден");
+                    JOptionPane.showMessageDialog(frame, "Самолёт не найден");
+                } catch (Exception ex) {
+                    logger.fatal("Неизвестная ошибка");
+                    JOptionPane.showMessageDialog(frame, "Неизвестная ошибка");
                 }
+            } else {
+                logger.warn("Индекс не введен");
+                JOptionPane.showMessageDialog(frame, "Индекс не введен");
             }
         } else {
+            logger.warn("Аэродром не выбран");
             JOptionPane.showMessageDialog(frame, "Аэродром не выбран");
         }
     }
 
     private void moveToFrame() {
         if (!planeQueue.isEmpty()) {
+            logger.info("Из очереди взят самолет " + planeQueue.peek().toString());
             FrameSeaPlane frameTruck = new FrameSeaPlane();
             frameTruck.setPlane(Objects.requireNonNull(planeQueue.poll()));
             frame.repaint();
+        } else {
+            logger.warn("Очередь пуста");
+            JOptionPane.showMessageDialog(frame, "Очередь пуста");
         }
     }
 
     private void addAirfield() {
         if (!fieldAirfieldName.getText().equals("")) {
+            logger.info("Добавили аэродром " + fieldAirfieldName.getText());
             airfieldCollection.addAirfield(fieldAirfieldName.getText());
             reloadLevels();
             frame.repaint();
         } else {
+            logger.warn("Введите название аэродрома");
             JOptionPane.showMessageDialog(frame, "Введите название аэродрома");
         }
     }
@@ -190,82 +194,113 @@ public class FrameAirfield {
         if (listBoxAirfields.getSelectedIndex() >= 0) {
             int result = JOptionPane.showConfirmDialog(frame, "Удалить аэродром " + listBoxAirfields.getSelectedValue() + "?");
             if (result == JOptionPane.YES_OPTION) {
+                logger.info("Удалили аэродром");
                 airfieldCollection.delAirfield(listBoxAirfields.getSelectedValue());
                 reloadLevels();
                 frame.repaint();
             }
         } else {
+            logger.warn("Аэродрома не выбран");
             JOptionPane.showMessageDialog(frame, "Аэродрома не выбран");
         }
     }
 
-    private void saveAll() throws IOException {
+    private void saveAll() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
         fileChooser.setFileFilter(filter);
 
         int result = fileChooser.showDialog(frame, "Save Airfield");
         if (result == JFileChooser.APPROVE_OPTION) {
-            String filename = fileChooser.getSelectedFile().toString();
-            if (filename.contains(".txt")) {
-                airfieldCollection.saveAllData(filename);
-            } else {
-                airfieldCollection.saveAllData(filename + ".txt");
+            try {
+                String filename = fileChooser.getSelectedFile().toString();
+                if (filename.contains(".txt")) {
+                    airfieldCollection.saveAllData(filename);
+                } else {
+                    airfieldCollection.saveAllData(filename + ".txt");
+                }
+                logger.info("Сохранено в файл " + filename);
+            } catch (Exception e) {
+                logger.fatal("Неизвестная ошибка при сохранении");
+                JOptionPane.showMessageDialog(frame, "Неизвестная ошибка при сохранении");
             }
         } else {
+            logger.warn("Не удалось сохранить файл");
             JOptionPane.showMessageDialog(frame, "Не удалось сохранить файл");
         }
     }
 
-    private void saveChosenAirfield() throws IOException {
+    private void saveChosenAirfield() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
         fileChooser.setFileFilter(filter);
 
         int result = fileChooser.showDialog(frame, "Save Airfield");
         if (result == JFileChooser.APPROVE_OPTION) {
-            String filename = fileChooser.getSelectedFile().toString();
-            if (filename.contains(".txt")) {
-                airfieldCollection.saveChosenAirfieldData(filename, listBoxAirfields.getSelectedValue());
-            } else {
-                airfieldCollection.saveChosenAirfieldData(filename + ".txt", listBoxAirfields.getSelectedValue());
+            try {
+                String filename = fileChooser.getSelectedFile().toString();
+                if (filename.contains(".txt")) {
+                    airfieldCollection.saveChosenAirfieldData(filename, listBoxAirfields.getSelectedValue());
+                } else {
+                    airfieldCollection.saveChosenAirfieldData(filename + ".txt", listBoxAirfields.getSelectedValue());
+                }
+                logger.info("Сохранено в файл " + filename);
+            } catch (Exception e) {
+                logger.fatal("Неизвестная ошибка при сохранении");
+                JOptionPane.showMessageDialog(frame, "Неизвестная ошибка при сохранении");
             }
         } else {
+            logger.warn("Не удалось сохранить файл");
             JOptionPane.showMessageDialog(frame, "Не удалось сохранить файл");
         }
     }
 
-    private void loadAll() throws IOException {
+    private void loadAll() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
         fileChooser.setFileFilter(filter);
         int result = fileChooser.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            String filename = fileChooser.getSelectedFile().toString();
-            airfieldCollection.loadAllData(filename);
-            reloadLevels();
-            frame.repaint();
+            try {
+                String filename = fileChooser.getSelectedFile().toString();
+                airfieldCollection.loadAllData(filename);
+                reloadLevels();
+                frame.repaint();
+                logger.info("Загружено из файла " + filename);
+            } catch (Exception e) {
+                logger.fatal("Неизвестная ошибка при загрузке");
+                JOptionPane.showMessageDialog(frame, "Неизвестная ошибка при загрузке");
+            }
         } else {
+            logger.warn("Не удалось загрузить файл");
             JOptionPane.showMessageDialog(frame, "Не удалось загрузить файл");
         }
     }
 
-    private void loadChosenAirfield() throws IOException {
+    private void loadChosenAirfield() {
         JFileChooser fileChooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "txt");
         fileChooser.setFileFilter(filter);
         int result = fileChooser.showOpenDialog(frame);
         if (result == JFileChooser.APPROVE_OPTION) {
-            String filename = fileChooser.getSelectedFile().toString();
-            airfieldCollection.loadChosenAirfieldData(filename);
-            reloadLevels();
-            frame.repaint();
+            try {
+                String filename = fileChooser.getSelectedFile().toString();
+                airfieldCollection.loadChosenAirfieldData(filename);
+                reloadLevels();
+                frame.repaint();
+                logger.info("Загружено из файла " + filename);
+            } catch (Exception e) {
+                logger.fatal("Неизвестная ошибка при загрузке");
+                JOptionPane.showMessageDialog(frame, "Неизвестная ошибка при загрузке");
+            }
         } else {
+            logger.warn("Не удалось загрузить файл");
             JOptionPane.showMessageDialog(frame, "Не удалось загрузить файл");
         }
     }
 
     private void reloadLevels() {
+
         int index = listBoxAirfields.getSelectedIndex();
 
         airfieldList.removeAllElements();
@@ -285,6 +320,5 @@ public class FrameAirfield {
     private void listListener() {
         airfieldPanel.setSelectedItem(listBoxAirfields.getSelectedValue());
         frame.repaint();
-
     }
 }

@@ -20,10 +20,10 @@ public class FrameSeaPlane {
         frame.setVisible(true);
         frame.setResizable(false);
 
-        Icon left = new ImageIcon("resources\\arrowLeft.jpg");
-        Icon right = new ImageIcon("resources\\arrowRight.jpg");
-        Icon up = new ImageIcon("resources\\arrowUp.jpg");
-        Icon down = new ImageIcon("resources\\arrowDown.jpg");
+        Icon left = new ImageIcon("src/main/resources/arrowLeft.jpg");
+        Icon right = new ImageIcon("src/main/resources/arrowRight.jpg");
+        Icon up = new ImageIcon("src/main/resources/arrowUp.jpg");
+        Icon down = new ImageIcon("src/main/resources/arrowDown.jpg");
 
         JButton btnCreatePlane = new JButton("Создать самолет");
         JButton btnCreateSeaPlane = new JButton("Создать гидролет");

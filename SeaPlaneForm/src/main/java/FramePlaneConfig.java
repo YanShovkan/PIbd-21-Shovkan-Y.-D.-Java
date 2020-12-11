@@ -30,12 +30,18 @@ public class FramePlaneConfig {
 
         JButton buttonAddPlane = new JButton("Добавить");
         buttonAddPlane.setBounds(230, 240, 200, 80);
-        buttonAddPlane.addActionListener(e -> addPlane());
+        buttonAddPlane.addActionListener(e -> {
+            try {
+                addPlane();
+            } catch (AirfieldOverflowException ex) {
+                ex.printStackTrace();
+            }
+        });
         frame.getContentPane().add(buttonAddPlane);
 
         JButton buttonCancel = new JButton("Отменить");
         buttonCancel.setBounds(230, 330, 200, 80);
-        buttonAddPlane.addActionListener(e -> cancel());
+        buttonCancel.addActionListener(e -> cancel());
         frame.getContentPane().add(buttonCancel);
 
         JPanel groupFloatForm = new JPanel();
@@ -307,7 +313,7 @@ public class FramePlaneConfig {
         frame.dispose();
     }
 
-    private void addPlane() {
+    private void addPlane() throws AirfieldOverflowException {
         if (plane == null) {
             frameAirfield.addPlane(null);
         } else if (plane instanceof SeaPlane) {

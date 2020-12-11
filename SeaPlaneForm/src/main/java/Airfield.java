@@ -15,7 +15,6 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
 
     private final int _placeSizeHeight = 80;
 
-
     public Airfield(int picWidth, int picHeight) {
         int width = picWidth / _placeSizeWidth;
         int height = picHeight / _placeSizeHeight;
@@ -25,25 +24,25 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
         pictureHeight = picHeight;
     }
 
-    public boolean plus(T plane) {
+    public boolean plus(T plane) throws AirfieldOverflowException {
         if (_places.size() < _maxCount) {
             _places.add(plane);
             return true;
         }
-        return false;
+        throw new AirfieldOverflowException();
     }
 
-    public T minus(int index) {
-        if (index >= 0 && index < _maxCount && _places.get(index) != null) {
-            T truck = _places.get(index);
-            _places.remove(index);
-            return truck;
+    public T minus(int index) throws PlaneNotFoundException {
+        if (index >= 0 && index < _maxCount ) {
+            try {
+                T plane = _places.get(index);
+                _places.remove(index);
+                return plane;
+            } catch (Exception ex) {
+                throw new PlaneNotFoundException(index);
+            }
         }
-        return null;
-    }
-
-    public void deleteAllPlanes() {
-        _places.clear();
+        throw new PlaneNotFoundException(index);
     }
 
     public boolean bolsheRavno(Plane plane1, Plane plane2) {
@@ -52,6 +51,10 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
 
     public boolean mensheRavno(Plane plane1, Plane plane2) {
         return (plane1.getWeight() <= plane2.getWeight());
+    }
+
+    public void deleteAllPlane() {
+        _places.clear();
     }
 
     public T getAirPlane(int index) {

@@ -45,7 +45,7 @@ public class AirfieldCollection {
         return airfieldStages.keySet();
     }
 
-    public boolean saveAllData(String filename) throws IOException {
+    public void saveAllData(String filename) throws IOException {
 
         FileWriter fileWriter = new FileWriter(filename);
         fileWriter.write("AirfieldCollection\n");
@@ -65,15 +65,13 @@ public class AirfieldCollection {
             }
 
         }
-
         fileWriter.close();
-        return true;
     }
 
-    public boolean saveChosenAirfieldData(String filename, String name) throws IOException {
+    public void saveChosenAirfieldData(String filename, String name) throws IOException {
 
-        if (!airfieldStages.containsKey(name)) {
-            return false;
+        if(!airfieldStages.containsKey(name)){
+            throw new NullPointerException();
         }
         FileWriter fileWriter = new FileWriter(filename);
         fileWriter.write("AirfieldCollection\n");
@@ -91,10 +89,9 @@ public class AirfieldCollection {
             fileWriter.write(plane.toString() + "\n");
         }
         fileWriter.close();
-        return true;
     }
 
-    public boolean loadChosenAirfieldData(String filename) throws IOException {
+    public void loadChosenAirfieldData(String filename) throws IOException, AirfieldOverflowException {
 
         FileReader fileReader = new FileReader(filename);
         Scanner scanner = new Scanner(fileReader);
@@ -103,18 +100,16 @@ public class AirfieldCollection {
         Plane plane = null;
 
         if (line.contains("AirfieldCollection")) {
-
             if (scanner.hasNextLine()) {
                 line = scanner.nextLine();
             } else {
                 line = null;
             }
-
             while (line != null) {
                 if (line.contains("Airfield")) {
                     key = line.split(separator)[1];
                     if (airfieldStages.containsKey(key)) {
-                        airfieldStages.get(key).deleteAllPlanes();
+                        airfieldStages.get(key).deleteAllPlane();
                     } else {
                         airfieldStages.put(key, new Airfield<Plane, IFloatForm>(frameWidth, frameHeight));
                     }
@@ -132,7 +127,7 @@ public class AirfieldCollection {
                 }
                 var result = airfieldStages.get(key).plus(plane);
                 if (!result) {
-                    return false;
+                    throw new NullPointerException();
                 }
                 if (scanner.hasNextLine()) {
                     line = scanner.nextLine();
@@ -140,14 +135,13 @@ public class AirfieldCollection {
                     break;
                 }
             }
-            fileReader.close();
-            return true;
+        } else {
+            throw new FileNotFoundException();
         }
         fileReader.close();
-        return false;
     }
 
-    public boolean loadAllData(String filename) throws IOException {
+    public void loadAllData(String filename) throws IOException, AirfieldOverflowException {
 
         FileReader fileReader = new FileReader(filename);
         Scanner scanner = new Scanner(fileReader);
@@ -181,7 +175,7 @@ public class AirfieldCollection {
                 }
                 var result = airfieldStages.get(key).plus(plane);
                 if (!result) {
-                    return false;
+                    throw new NullPointerException();
                 }
                 if (scanner.hasNextLine()) {
                     line = scanner.nextLine();
@@ -189,10 +183,9 @@ public class AirfieldCollection {
                     break;
                 }
             }
-            fileReader.close();
-            return true;
+        } else {
+            throw new FileNotFoundException();
         }
         fileReader.close();
-        return false;
     }
 }
