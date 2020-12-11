@@ -1,8 +1,11 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Airfield<T extends IAirTransport, K extends IFloatForm> {
+    public PlaneComparer planeComparator = new PlaneComparer();
+
     private final List<T> _places;
 
     private final int _maxCount;
@@ -24,16 +27,20 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
         pictureHeight = picHeight;
     }
 
-    public boolean plus(T plane) throws AirfieldOverflowException {
-        if (_places.size() < _maxCount) {
-            _places.add(plane);
-            return true;
+    public boolean plus(T plane) throws AirfieldOverflowException, AirfieldAlreadyHaveThisPlaneException {
+        if (_places.size() >= _maxCount) {
+            throw new AirfieldOverflowException();
         }
-        throw new AirfieldOverflowException();
+        if (_places.contains(plane)) {
+            throw new AirfieldAlreadyHaveThisPlaneException();
+        }
+        _places.add(plane);
+        return true;
+
     }
 
     public T minus(int index) throws PlaneNotFoundException {
-        if (index >= 0 && index < _maxCount ) {
+        if (index >= 0 && index < _maxCount) {
             try {
                 T plane = _places.get(index);
                 _places.remove(index);
@@ -79,5 +86,9 @@ public class Airfield<T extends IAirTransport, K extends IFloatForm> {
             }
             g.drawLine(i * _placeSizeWidth, 0, i * _placeSizeWidth, (pictureHeight / _placeSizeHeight) * _placeSizeHeight);
         }
+    }
+
+    public void sort(){
+        _places.sort(planeComparator);
     }
 }

@@ -8,6 +8,19 @@ public class ovalFloat implements IFloatForm {
         setDigit(number);
     }
 
+    public int getNumber(){
+        if (floats == EnumerationOfFloats.Two){
+            return 2;
+        }
+        if (floats == EnumerationOfFloats.Four){
+            return 4;
+        }
+        if (floats == EnumerationOfFloats.Six){
+            return 6;
+        }
+        return 0;
+    }
+
     public void setDigit(int number) {
         this.floats = EnumerationOfFloats.getChosenNumber(number);
     }

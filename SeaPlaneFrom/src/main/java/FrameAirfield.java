@@ -72,6 +72,7 @@ public class FrameAirfield {
         fieldAirfieldName = new JTextField();
         JButton buttonAddAirfield = new JButton("Добавить аэродром");
         JButton buttonDelAirfield = new JButton("Удалить аэродром");
+        JButton buttonSort = new JButton("Сортировать");
 
         frame.getContentPane().add(airfieldPanel);
         frame.getContentPane().add(buttonCreatePlane);
@@ -86,6 +87,7 @@ public class FrameAirfield {
         frame.getContentPane().add(buttonAddAirfield);
         frame.getContentPane().add(buttonDelAirfield);
         frame.getContentPane().add(listBoxAirfields);
+        frame.getContentPane().add(buttonSort);
 
         airfieldPanel.setBounds(0, 0, 650, 450);
         labelAirdieldName.setBounds(610, 10, 270, 30);
@@ -93,12 +95,13 @@ public class FrameAirfield {
         buttonAddAirfield.setBounds(610, 90, 270, 30);
         listBoxAirfields.setBounds(610, 130, 270, 60);
         buttonDelAirfield.setBounds(610, 200, 270, 30);
-        buttonCreatePlane.setBounds(610, 240, 270, 70);
+        buttonCreatePlane.setBounds(610, 240, 270, 30);
         labelPlace.setBounds(610, 330, 270, 20);
         labelTakePlane.setBounds(610, 360, 270, 20);
         textFieldTakePalne.setBounds(610, 390, 270, 20);
         buttonGetFromQueue.setBounds(610, 420, 130, 30);
         buttonMoveToQueue.setBounds(750, 420, 130, 30);
+        buttonSort.setBounds(610, 280, 270, 30);
 
         saveChosenAirfieldItem.addActionListener(e -> saveChosenAirfield());
         loadChosenAirfieldItem.addActionListener(e -> loadChosenAirfield());
@@ -110,7 +113,15 @@ public class FrameAirfield {
         buttonAddAirfield.addActionListener(e -> addAirfield());
         buttonDelAirfield.addActionListener(e -> delAirfield());
         listBoxAirfields.addListSelectionListener(e -> listListener());
+        buttonSort.addActionListener(e -> sort());
 
+        frame.repaint();
+    }
+
+    private void sort(){
+        if (listBoxAirfields.getSelectedIndex() >= 0){
+            airfieldCollection.get(listBoxAirfields.getSelectedValue()).sort();
+        }
         frame.repaint();
     }
 
@@ -131,7 +142,10 @@ public class FrameAirfield {
                     logger.info("Самолет не удалось поставить");
                     JOptionPane.showMessageDialog(frame, "Самолет не удалось поставить");
                 }
-            } catch (AirfieldOverflowException ex) {
+            } catch (AirfieldAlreadyHaveThisPlaneException ex) {
+                logger.error("На аэродроме уже есть такаой самолёт");
+                JOptionPane.showMessageDialog(frame, "На аэродроме уже есть такаой самолёт");
+            }catch (AirfieldOverflowException ex) {
                 logger.error("Переполнение");
                 JOptionPane.showMessageDialog(frame, "Переполнение");
             } catch (Exception ex) {

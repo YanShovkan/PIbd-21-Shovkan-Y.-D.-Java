@@ -91,7 +91,7 @@ public class AirfieldCollection {
         fileWriter.close();
     }
 
-    public void loadChosenAirfieldData(String filename) throws IOException, AirfieldOverflowException {
+    public void loadChosenAirfieldData(String filename) throws IOException, AirfieldOverflowException, AirfieldAlreadyHaveThisPlaneException {
 
         FileReader fileReader = new FileReader(filename);
         Scanner scanner = new Scanner(fileReader);
@@ -141,7 +141,7 @@ public class AirfieldCollection {
         fileReader.close();
     }
 
-    public void loadAllData(String filename) throws IOException, AirfieldOverflowException {
+    public void loadAllData(String filename) throws IOException, AirfieldOverflowException, AirfieldAlreadyHaveThisPlaneException {
 
         FileReader fileReader = new FileReader(filename);
         Scanner scanner = new Scanner(fileReader);

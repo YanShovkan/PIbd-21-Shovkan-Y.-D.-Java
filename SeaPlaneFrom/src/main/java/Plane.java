@@ -1,6 +1,12 @@
 import java.awt.*;
+import java.lang.Object;
+import java.util.Iterator;
+import java.util.LinkedList;
 
-public class Plane extends AirPlane {
+
+public class Plane extends AirPlane implements Iterator<Object>,Iterable<Object>,Comparable<Plane> {
+    public LinkedList<Object> objectProperties= new LinkedList<Object>();
+
     protected int planeWidth = 100;
 
     protected int planeHeight = 70;
@@ -8,6 +14,27 @@ public class Plane extends AirPlane {
     protected final String separator = ";";
 
     protected final String separatorForColor = "-";
+
+    private int currentIndex =  0;
+    @Override
+    public boolean hasNext() {
+        return currentIndex++ < 3;
+    }
+
+    @Override
+    public Object next() {
+        return objectProperties.get(currentIndex);
+    }
+
+    @Override
+    public void remove() {
+        objectProperties.remove(currentIndex);
+    }
+
+    @Override
+    public Iterator<Object> iterator() {
+        return objectProperties.iterator();
+    }
 
     public Plane(int maxSpeed, int weight, Color mainColor) {
         this.maxSpeed = maxSpeed;
@@ -19,16 +46,22 @@ public class Plane extends AirPlane {
         String[] infoStrs = info.split(separator);
         if (infoStrs.length == 3) {
             maxSpeed = Integer.parseInt(infoStrs[0]);
+            objectProperties.add(maxSpeed);
             weight = Integer.parseInt(infoStrs[1]);
+            objectProperties.add(weight);
             String[] colorStrs = infoStrs[2].split(separatorForColor);
             mainColor = new Color(Integer.parseInt(colorStrs[0]), Integer.parseInt(colorStrs[1]), Integer.parseInt(colorStrs[2]));
+            objectProperties.add(mainColor);
         }
     }
 
     protected Plane(int maxSpeed, int weight, Color mainColor, int planeWidth, int planeHeight) {
         this.maxSpeed = maxSpeed;
+        objectProperties.add(maxSpeed);
         this.weight = weight;
+        objectProperties.add(weight);
         this.mainColor = mainColor;
+        objectProperties.add(mainColor);
         this.planeWidth = planeWidth;
         this.planeHeight = planeHeight;
     }
@@ -90,4 +123,47 @@ public class Plane extends AirPlane {
         return maxSpeed + separator + weight + separator + mainColor.getRed() + separatorForColor + mainColor.getGreen() + separatorForColor + mainColor.getBlue();
     }
 
+    public boolean Equals(Plane other) {
+        if (other == null) {
+            return false;
+        }
+        if (this.getClass().getName() != other.getClass().getName()) {
+            return false;
+        }
+        if (this.maxSpeed != other.maxSpeed) {
+            return false;
+        }
+        if (this.weight != other.weight) {
+            return false;
+        }
+        if (this.mainColor != other.mainColor) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Plane)) {
+            return false;
+        } else {
+            return Equals((Plane) obj);
+        }
+    }
+
+    public int compareTo(Plane anotherPlane) {
+        if(this.maxSpeed != anotherPlane.maxSpeed) {
+            return this.maxSpeed - anotherPlane.maxSpeed;
+        }
+        if(this.weight != anotherPlane.weight){
+            return this.weight - anotherPlane.weight;
+        }
+        if(this.mainColor.getRGB() != anotherPlane.mainColor.getRGB()){
+            return this.mainColor.getRGB() - anotherPlane.mainColor.getRGB();
+        }
+        return 0;
+    }
 }
